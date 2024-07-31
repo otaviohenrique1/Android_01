@@ -2,7 +2,7 @@ package br.com.alura.orgs.ui.activty
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+//import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import br.com.alura.orgs.R
@@ -11,35 +11,39 @@ import br.com.alura.orgs.ui.recyclerview.adapter.ListaProdutosAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ListaProdutosActivity : AppCompatActivity(R.layout.activity_lista_produtos) {
-
+    private val dao = ProdutoDAO()
+    private val adapter = ListaProdutosAdapter(
+        context = this,
+        produtos = dao.buscaTodos()
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         configuraReciclerView()
+        configuraFab()
     }
 
     override fun onResume() {
         super.onResume()
-
-        // Navegação entre telas
-        configuraFab()
+        adapter.atualiza(dao.buscaTodos())
     }
 
     private fun configuraFab() {
-        val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
+        val fab = findViewById<FloatingActionButton>(R.id.activity_lista_produtos_fab)
         fab.setOnClickListener {
-            val intent = Intent(this, FormularioProdutoActivity::class.java)
-            startActivity(intent)
+            vaiParaFormularioProduto()
         }
     }
 
+    private fun vaiParaFormularioProduto() {
+        // Navegação entre telas
+        val intent = Intent(this, FormularioProdutoActivity::class.java)
+        startActivity(intent)
+    }
+
     private fun configuraReciclerView() {
-        val dao = ProdutoDAO()
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        Log.i("MainActivity", "onCreate: ${dao.buscaTodos()}")
-        recyclerView.adapter = ListaProdutosAdapter(
-            context = this,
-            produtos = dao.buscaTodos()
-        )
+        val recyclerView = findViewById<RecyclerView>(R.id.activity_lista_produtos_recyclerView)
+//        Log.i("MainActivity", "onCreate: ${dao.buscaTodos()}")
+        recyclerView.adapter = adapter
     }
 }
